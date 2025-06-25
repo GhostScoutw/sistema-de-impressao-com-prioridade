@@ -24,7 +24,8 @@ int main() {
         printf("3. Executar impressão\n");
         printf("4. Mostrar fila de espera\n");
         printf("5. Mostrar histórico de impressões\n");
-        printf("6. Sair\n");
+        printf("6. Estatísticas\n");
+        printf("7. Sair\n");
         printf("Escolha uma opção: ");
         scanf("%d", &opcao);
 
@@ -87,23 +88,92 @@ int main() {
                 break;
             }
                 
-            case 6: { //sair
+            case 6: {   //mostrar estatísticas
+                int totalEstudante = 0, 
+                totalProfessor = 0, 
+                totalAdmin = 0,
+
+                paginasEstudante = 0, 
+                paginasProfessor = 0, 
+                paginasAdmin = 0,
+
+                countEstudante = 0, 
+                countProfessor = 0, 
+                countAdmin = 0;
+
+                NoHistorico* atual = historico->proximo;
+                while (atual != NULL) {
+                    Impressao* imp = atual->impressao;
+                    if (imp && imp->usuario) {
+
+                        switch (imp->usuario->tipoUsuario) {
+
+
+                            case ESTUDANTE:
+                                totalEstudante++;
+                                paginasEstudante += imp->numPaginas;
+                                countEstudante++;
+                                break;
+
+                            case PROFESSOR:
+                                totalProfessor++;
+                                paginasProfessor += imp->numPaginas;
+                                countProfessor++;
+                                break;
+
+                            case ADMINISTRACAO:
+                                totalAdmin++;
+                                paginasAdmin += imp->numPaginas;
+                                countAdmin++;
+                                break;
+                        }
+                    }
+                    atual = atual->proximo;
+                }
+
+                printf("\n--- Estatísticas ---\n");
+                printf("Total de impressões:\n");
+                printf("Estudantes: %d\n", totalEstudante);
+                printf("Professores: %d\n", totalProfessor);
+                printf("Administração/Direção: %d\n", totalAdmin);
+
+                printf("\nNúmero total de páginas:\n");
+                printf("Estudantes: %d\n", paginasEstudante);
+                printf("Professores: %d\n", paginasProfessor);
+                printf("Administração/Direção: %d\n", paginasAdmin);
+
+                printf("\nTempo médio estimado por prioridade:\n");
+                if (countEstudante > 0)
+                    printf("Estudantes: %.2f s\n", (paginasEstudante * 5.0) / countEstudante);
+                else
+                    printf("Estudantes: N/A\n");
+                if (countProfessor > 0)
+                    printf("Professores: %.2f s\n", (paginasProfessor * 5.0) / countProfessor);
+                else
+                    printf("Professores: N/A\n");
+                if (countAdmin > 0)
+                    printf("Administração/Direção: %.2f s\n", (paginasAdmin * 5.0) / countAdmin);
+                else
+                    printf("Administração/Direção: N/A\n");
+
+                break;
+            }
+
+            case 7:
                 printf("Encerrando o sistema...\n");
                 break;
-            }
-                
-            default: { //opcao invalida
+
+            default:
                 printf("Opção inválida. Tente novamente.\n");
                 break;
-            }
         }
 
-    } while (opcao != 6);
+    } while (opcao != 7);
 
     freeListaUsuario(listaUsuarios);
     freeFila(primeiroFila);
     freeFila(ultimoFila);
     freeHistorico(historico);
-    
+
     return 0;
 }
